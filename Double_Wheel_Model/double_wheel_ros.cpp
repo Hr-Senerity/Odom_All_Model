@@ -1,19 +1,19 @@
 /*
- * @Description: Using the ROS-NOETIC version, an analysis of the wheel odometer for a two wheel differential car model
+ * @Description: Using the ROS-NOETIC version, an analysis of the wheel odometer for a double wheel differential car model
  * @Version: 1.0
- * @Autor: Senerity
+ * @Author: Senerity
  * @Date: 2023-08-16
  * @LastEditors: Senerity
  * @LastEditTime: 2023-08-17 16:28:11
  */
+
 #include <ros/ros.h>
 #include <nav_msgs/Odometry.h>
 #include <tf/tf.h>
 #include <math.h>
 
-double wheel_Radis = 1;  // vehicle diameter，The unit is m
+double wheel_radius = 1;  // vehicle diameter，The unit is m
 double wheel_dist = 1;   // wheel base，The unit is m
-double dist_time = 0.01; // Unit of time，Here is 0.01 seconds, that is, 100hz frequency calculation
 
 /**
  * @description: This function inputs two wheel speeds and outputs odometer information
@@ -31,8 +31,8 @@ nav_msgs::Odometry odom_return_function(const double wheel_l, double wheel_r, do
     // Convert the wheel speed to the line speed of each wheel
     // According to the formula, the unit is m/min, converted to m/s;
 
-    double v_l = wheel_l * M_PI * wheel_Radis / 60;
-    double v_r = wheel_r * M_PI * wheel_Radis / 60;
+    double v_l = wheel_l * M_PI * wheel_radius / 60;
+    double v_r = wheel_r * M_PI * wheel_radius / 60;
 
     // Convert the linear speed of each wheel to the speed of the car body
     double v = (v_l + v_r) / 2;
@@ -40,9 +40,9 @@ nav_msgs::Odometry odom_return_function(const double wheel_l, double wheel_r, do
     double d = wheel_dist * (v_l + v_r) / 2 / (v_r - v_l);
 
     // Give the angle, pose
-    double theta = w * dist_time;
-    double x = v * cos(theta) * dist_time;
-    double y = v * sin(theta) * dist_time;
+    double theta = w * time;
+    double x = v * cos(theta) * time;
+    double y = v * sin(theta) * time;
 
     // Pose update
     theta += theta;
@@ -66,6 +66,7 @@ nav_msgs::Odometry odom_return_function(const double wheel_l, double wheel_r, do
  * @author: Senerity
  */
 void get_new_data() {
+
 }
 
 int main(int argc, char **argv) {
@@ -95,6 +96,5 @@ int main(int argc, char **argv) {
         loop_rate.sleep();
         last_time = current_time;
     }
-
     return 0;
 }
