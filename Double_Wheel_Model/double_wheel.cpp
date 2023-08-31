@@ -10,6 +10,13 @@
 #include <iostream>
 #include <math.h>
 
+//Pose update
+yaw += theta;
+x += x;
+y += y;
+
+
+
 double wheel_radius = 1; //vehicle diameter，The unit is m
 double wheel_dist = 1;//wheel base，The unit is m
 double dist_time = 0.01; //Unit of time，Here is 0.01 seconds, that is, 100hz frequency calculation
@@ -34,12 +41,6 @@ void double_wheel_odom_pose(double wheel_l, double wheel_r, double x, double y, 
     double theta = w * dist_time;
     x = v * cos(theta) * dist_time;
     y = v * sin(theta) * dist_time;
-
-    //Pose update
-    yaw += theta;
-    x += x;
-    y += y;
-
 
 
     aaaa;
