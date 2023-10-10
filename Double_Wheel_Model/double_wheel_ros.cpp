@@ -15,8 +15,38 @@
 double wheel_radius = 1;  // vehicle diameter，The unit is m
 double wheel_dist = 1;   // wheel base，The unit is m
 
+int main(int argc, char **argv) {
+    ros::init(argc, argv, "your_node_name");
+    ros::NodeHandle nh;
+
+    ros::Publisher odom_pub = nh.advertise<nav_msgs::Odometry>("odom", 10);
+
+    double wheel_a, wheel_b;
+
+    ros::Rate loop_rate(100);
+
+    ros::Time current_time, last_time;
+    current_time = ros::Time::now();
+    last_time = ros::Time::now();
+
+    while (ros::ok()) {
+        current_time = ros::Time::now();
+        double velDeltaTime = (current_time - last_time).toSec();
+
+        get_new_data();
+        nav_msgs::Odometry odom_out = odom_return_function(wheel_a, wheel_b, velDeltaTime);
+
+        odom_pub.publish(odom_out);
+
+        ros::spinOnce();
+        loop_rate.sleep();
+        last_time = current_time;
+    }
+    return 0;
+}
+
 /**
- * @description: This function inputs two wheel speeds and outputs odometer information
+ * @description: The function inputs two wheel speeds and outputs odometer information
  * @param {double} wheel_l
  * @param {double} wheel_r
  * @param {double} time
@@ -46,6 +76,7 @@ nav_msgs::Odometry odom_return_function(const double wheel_l, double wheel_r, do
 
     // Pose update
     theta += theta;
+    theta = normalizeAngle(theta);
     x += x;
     y += y;
 
@@ -61,7 +92,7 @@ nav_msgs::Odometry odom_return_function(const double wheel_l, double wheel_r, do
 }
 
 /**
- * @description: This function is a reserved low-level communication function, and the recommended output is two rounds of each wheel speed
+ * @description: The function is a reserved low-level communication function, and the recommended output is two rounds of each wheel speed
  * @return {*}
  * @author: Senerity
  */
@@ -69,32 +100,18 @@ void get_new_data() {
 
 }
 
-int main(int argc, char **argv) {
-    ros::init(argc, argv, "your_node_name");
-    ros::NodeHandle nh;
-
-    ros::Publisher odom_pub = nh.advertise<nav_msgs::Odometry>("odom", 10);
-
-    double wheel_a, wheel_b;
-
-    ros::Rate loop_rate(100);
-
-    ros::Time current_time, last_time;
-    current_time = ros::Time::now();
-    last_time = ros::Time::now();
-
-    while (ros::ok()) {
-        current_time = ros::Time::now();
-        double velDeltaTime = (current_time - last_time).toSec();
-
-        get_new_data();
-        nav_msgs::Odometry odom_out = odom_return_function(wheel_a, wheel_b, velDeltaTime);
-
-        odom_pub.publish(odom_out);
-
-        ros::spinOnce();
-        loop_rate.sleep();
-        last_time = current_time;
+/**
+ * @description: The function normalizes angle values.
+ * @param {double} angle
+ * @return {double}  angle
+ * @author: Senerity
+ */
+double normalizeAngle(double angle) {
+    while (angle > M_PI) {
+        angle -= 2.0 * M_PI;
     }
-    return 0;
+    while (angle < -M_PI) {
+        angle += 2.0 * M_PI;
+    }
+    return angle;
 }

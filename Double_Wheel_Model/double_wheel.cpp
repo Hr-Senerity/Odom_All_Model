@@ -27,7 +27,7 @@ void double_wheel_odom_pose(double wheel_l, double wheel_r, double x, double y, 
 
     //Convert the linear speed of each wheel to the speed of the car body
     v = M_PI * wheel_radius * (wheel_l + wheel_r) / 2 / 60;
-    w = M_PI * wheel_radius * (wheel_l + wheel_r) / wheel_dist / 60;
+    w = M_PI * wheel_radius * (wheel_r + wheel_l) / wheel_dist / 60;
     d = wheel_dist * (wheel_l + wheel_r) / 2 / (wheel_r - wheel_l);
 
     //Give the angle, pose
@@ -37,6 +37,23 @@ void double_wheel_odom_pose(double wheel_l, double wheel_r, double x, double y, 
 
     //Pose update
     yaw += theta;
+    yaw = normalizeAngle(yaw);
     x += x;
     y += y;
+}
+
+/**
+ * @description: The function normalizes angle values.
+ * @param {double} angle
+ * @return {double}  angle
+ * @author: Senerity
+ */
+double normalizeAngle(double angle) {
+    while (angle > M_PI) {
+        angle -= 2.0 * M_PI;
+    }
+    while (angle < -M_PI) {
+        angle += 2.0 * M_PI;
+    }
+    return angle;
 }
