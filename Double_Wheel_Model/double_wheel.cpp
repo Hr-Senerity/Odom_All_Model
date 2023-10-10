@@ -27,7 +27,7 @@ void double_wheel_odom_pose(double wheel_l, double wheel_r, double x, double y, 
 
     //Convert the linear speed of each wheel to the speed of the car body
     v = M_PI * wheel_radius * (wheel_l + wheel_r) / 2 / 60;
-    w = M_PI * wheel_radius * (wheel_r + wheel_l) / wheel_dist / 60;
+    w = M_PI * wheel_radius * (wheel_l + wheel_r) / wheel_dist / 60;
     d = wheel_dist * (wheel_l + wheel_r) / 2 / (wheel_r - wheel_l);
 
     //Give the angle, pose
